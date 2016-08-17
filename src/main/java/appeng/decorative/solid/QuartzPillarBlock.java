@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -37,6 +38,7 @@ import appeng.helpers.MetaRotation;
 
 public class QuartzPillarBlock extends AEBaseBlock implements IOrientableBlock
 {
+	public static final PropertyEnum<EnumFacing.Axis> AXIS_ORIENTATION = PropertyEnum.create( "axis", EnumFacing.Axis.class );
 
 	public QuartzPillarBlock()
 	{
@@ -47,15 +49,15 @@ public class QuartzPillarBlock extends AEBaseBlock implements IOrientableBlock
 	@Override
 	public int getMetaFromState( final IBlockState state )
 	{
-		return state.getValue(AXIS_ORIENTATION).ordinal();
+		return state.getValue( AXIS_ORIENTATION ).ordinal();
 	}
 
 	@Override
 	public IBlockState getStateFromMeta( final int meta )
 	{
-	    // Simply use the ordinal here
-	    EnumFacing.Axis axis = EnumFacing.Axis.values()[meta];
-		return this.getDefaultState().withProperty(AXIS_ORIENTATION, axis);
+		// Simply use the ordinal here
+		EnumFacing.Axis axis = EnumFacing.Axis.values()[meta];
+		return this.getDefaultState().withProperty( AXIS_ORIENTATION, axis );
 	}
 
 	@Override
