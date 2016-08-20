@@ -83,7 +83,11 @@ public final class AEBlockFeatureHandler implements IFeatureHandler
 	{
 		if( this.enabled )
 		{
-			final String name = this.extractor.get();
+			String name = this.extractor.get();
+			if( Item.REGISTRY.containsKey( new ResourceLocation( AppEng.MOD_ID, name ) ) )
+			{
+				name += "_block";
+			}
 			this.featured.setCreativeTab( CreativeTab.instance );
 			this.featured.setUnlocalizedName( "appliedenergistics2." + name );
 

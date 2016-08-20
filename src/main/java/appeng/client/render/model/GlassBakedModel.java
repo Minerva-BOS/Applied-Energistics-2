@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
+
 import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
@@ -43,8 +44,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
+import appeng.decorative.solid.BlockQuartzGlass;
 import appeng.decorative.solid.GlassState;
-import appeng.decorative.solid.QuartzGlassBlock;
 
 
 public class GlassBakedModel implements IBakedModel
@@ -107,7 +108,7 @@ public class GlassBakedModel implements IBakedModel
 
 		IExtendedBlockState extState = (IExtendedBlockState) state;
 
-		GlassState glassState = extState.getValue( QuartzGlassBlock.GLASS_STATE );
+		GlassState glassState = extState.getValue( BlockQuartzGlass.GLASS_STATE );
 
 		final int cx = Math.abs( glassState.getX() % 10 );
 		final int cy = Math.abs( glassState.getY() % 10 );

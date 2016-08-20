@@ -19,6 +19,7 @@
 package appeng.core.features;
 
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Optional;
@@ -29,6 +30,9 @@ public class FeatureNameExtractor
 	private static final Pattern PATTERN_ITEM_MULTI_PART = Pattern.compile( "ItemMultiPart", Pattern.LITERAL );
 	private static final Pattern PATTERN_ITEM_MULTI_MATERIAL = Pattern.compile( "ItemMultiMaterial", Pattern.LITERAL );
 	private static final Pattern PATTERN_QUARTZ = Pattern.compile( "Quartz", Pattern.LITERAL );
+
+	private static final Pattern PATTERN_LOWERCASE = Pattern.compile( "([\\p{Upper}])([\\p{Upper}]+)" );
+	private static final Pattern PATTERN_LOWERCASER = Pattern.compile( "(.)?([\\p{Upper}])" );
 
 	private final Class<?> clazz;
 	private final Optional<String> subName;
@@ -41,24 +45,8 @@ public class FeatureNameExtractor
 
 	public String get()
 	{
-		String name = this.clazz.getSimpleName();
-
-		if( name.startsWith( "ItemMultiPart" ) )
-		{
-			name = PATTERN_ITEM_MULTI_PART.matcher( name ).replaceAll( "ItemPart" );
-		}
-		else if( name.startsWith( "ItemMultiMaterial" ) )
-		{
-			name = PATTERN_ITEM_MULTI_MATERIAL.matcher( name ).replaceAll( "ItemMaterial" );
-		}
-		else if( name.startsWith( "BlockStairCommon" ) )
-		{
-			name = "stair";
-		}
-		else if( name.startsWith( "BlockFluix" ) )
-		{
-			name = "fluix";
-		}
+		String ret;
+		String name = this.clazz.getSimpleName().replaceFirst( "\\p{Upper}[\\p{Lower}]*(\\p{Upper})", "$1" );
 
 		if( this.subName.isPresent() )
 		{
@@ -67,20 +55,42 @@ public class FeatureNameExtractor
 			// mode code outside of AEBaseItem
 			if( subName.startsWith( "P2PTunnel" ) )
 			{
-				return "ItemPart.P2PTunnel";
+				ret = "p2ptunnel";
 			}
 			else if( subName.equals( "CertusQuartzTools" ) )
 			{
-				return PATTERN_QUARTZ.matcher( name ).replaceAll( "CertusQuartz" );
+				ret = PATTERN_QUARTZ.matcher( name ).replaceAll( "CertusQuartz" );
 			}
 			else if( subName.equals( "NetherQuartzTools" ) )
 			{
-				return PATTERN_QUARTZ.matcher( name ).replaceAll( "NetherQuartz" );
+				ret = PATTERN_QUARTZ.matcher( name ).replaceAll( "NetherQuartz" );
 			}
-
-			name += '.' + subName;
+			else
+			{
+				ret = name + '_' + subName;
+			}
+		}
+		else
+		{
+			ret = name;
 		}
 
-		return name;
+		StringBuffer buffer = new StringBuffer();
+		Matcher m = PATTERN_LOWERCASE.matcher( ret );
+		while( m.find() )
+		{
+			m.appendReplacement( buffer, m.group( 1 ) + m.group( 2 ).toLowerCase() );
+		}
+		m.appendTail( buffer );
+		m = PATTERN_LOWERCASER.matcher( buffer.toString() );
+		buffer = new StringBuffer();
+		while( m.find() )
+		{
+			m.appendReplacement( buffer, ( m.group( 1 ) != null ? m.group( 1 ) + '_' : "" ) + m.group( 2 ).toLowerCase() );
+		}
+		m.appendTail( buffer );
+		ret = buffer.toString().replace( '.', '_' ).replaceAll( "_+", "_" );
+		return ret;
 	}
+
 }
